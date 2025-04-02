@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍷 Wine Quality Predictor</title>
+    
+    <style>
+        /* Background Styling */
+        body {
+            background: url('https://i.imgur.com/8VR8JzM.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 50px;
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Heading */
+        h1 {
+            font-size: 2.5em;
+            color: #d4af37; /* Gold */
+        }
+
+        /* Input Fields */
+        .input-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input {
+            width: 45%;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #d4af37;
+        }
+
+        /* Predict Button */
+        button {
+            background: #800020; /* Dark Red */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #d4af37; /* Gold */
+            color: #800020; /* Dark Red */
+        }
+
+        /* Prediction Result */
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍷 Wine Quality Predictor 🍷</h1>
+    <div class="container">
+        <form id="wineForm">
+            <div class="input-container">
+                <input type="number" name="fixed_acidity" placeholder="Fixed Acidity" required>
+                <input type="number" name="volatile_acidity" placeholder="Volatile Acidity" required>
+                <input type="number" name="citric_acid" placeholder="Citric Acid" required>
+                <input type="number" name="residual_sugar" placeholder="Residual Sugar" required>
+                <input type="number" name="chlorides" placeholder="Chlorides" required>
+                <input type="number" name="free_sulfur_dioxide" placeholder="Free SO2" required>
+                <input type="number" name="total_sulfur_dioxide" placeholder="Total SO2" required>
+                <input type="number" name="density" placeholder="Density" required>
+                <input type="number" name="pH" placeholder="pH" required>
+                <input type="number" name="sulphates" placeholder="Sulphates" required>
+                <input type="number" name="alcohol" placeholder="Alcohol" required>
+            </div>
+            <button type="button" onclick="predictWine()">Predict Quality</button>
+        </form>
+        <div id="predictionResult" class="result"></div>
+    </div>
+
+    <script>
+        function predictWine() {
+            let formData = new FormData(document.getElementById("wineForm"));
+            let jsonObject = {};
+            formData.forEach((value, key) => jsonObject[key] = parseFloat(value));
+
+            fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ features: Object.values(jsonObject) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("predictionResult").innerText = "Prediction: " + data.prediction;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
